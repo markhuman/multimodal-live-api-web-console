@@ -38,6 +38,14 @@ const declaration: FunctionDeclaration = {
 function AltairComponent() {
   const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig } = useLiveAPIContext();
+  const [systemPrompt, setSystemPrompt] = useState<string>("");
+
+  // Fetch system prompt
+  useEffect(() => {
+    fetch("/shoppingAssistantPrompt.md")
+      .then((response) => response.text())
+      .then((text) => setSystemPrompt(text));
+  }, []);
 
   useEffect(() => {
     setConfig({
@@ -45,14 +53,12 @@ function AltairComponent() {
       generationConfig: {
         responseModalities: "audio",
         speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } },
+          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Puck" } },
         },
       },
       systemInstruction: {
         parts: [
-          {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
-          },
+          { text: systemPrompt },
         ],
       },
       tools: [
@@ -61,7 +67,7 @@ function AltairComponent() {
         { functionDeclarations: [declaration] },
       ],
     });
-  }, [setConfig]);
+  }, [setConfig, systemPrompt]);
 
   useEffect(() => {
     const onToolCall = (toolCall: ToolCall) => {
