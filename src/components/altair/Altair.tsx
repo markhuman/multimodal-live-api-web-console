@@ -40,9 +40,9 @@ function AltairComponent() {
   const { client, setConfig } = useLiveAPIContext();
   const [systemPrompt, setSystemPrompt] = useState<string>("");
 
-  // Fetch system prompt
+  // Fetch system prompt with updated file name
   useEffect(() => {
-    fetch("/shoppingAssistantPrompt.md")
+    fetch("/wineMerchantPrompt.md")
       .then((response) => response.text())
       .then((text) => setSystemPrompt(text));
   }, []);
