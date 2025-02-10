@@ -42,7 +42,7 @@ function AltairComponent() {
 
   // Fetch system prompt with updated file name
   useEffect(() => {
-    fetch("/wineMerchantPrompt.md")
+    fetch("/nordanPrompt.md")
       .then((response) => response.text())
       .then((text) => setSystemPrompt(text));
   }, []);
@@ -67,7 +67,19 @@ function AltairComponent() {
         { functionDeclarations: [declaration] },
       ],
     });
-  }, [setConfig, systemPrompt]);
+
+    // Add listener for setupcomplete event
+    const onSetupComplete = () => {
+      // Send initial greeting
+      client.send([{ text: "START_CONVERSATION" }]);
+    };
+
+    client.on("setupcomplete", onSetupComplete);
+
+    return () => {
+      client.off("setupcomplete", onSetupComplete);
+    };
+  }, [setConfig, systemPrompt, client]);
 
   useEffect(() => {
     const onToolCall = (toolCall: ToolCall) => {
